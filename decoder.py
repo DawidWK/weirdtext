@@ -3,16 +3,30 @@ from encoder import can_encode
 
 
 def decode_sentence(sentence, orginal_words):
+    """
+    Decode only if the sentence has a magic separator at the beginning and at the end.
+
+    Args:
+        sentence (string): sentence, can contains special characters.
+        orginal_words (string): orgnial_words in alphabetical order separated with space bar
+
+    Returns:
+        string: decoded sentence
+    """
     SEPARATOR = "\n—weird—\n"
     words_span = []
-    output_sentence = list(sentence)
+    output = []
+
     if sentence[0:9] != SEPARATOR or sentence[-9:] != SEPARATOR:
         raise ValueError("'sentence' is not encoded with weirdtext encoder")
-    processed_sentence = sentence[9:-9]
-    print(processed_sentence)
+
+    sentence = sentence[len(SEPARATOR):-len(SEPARATOR)]
+
+    output_sentence = list(sentence)
+
     tokenize_re = re.compile(r'(\w+)', re.U)
-    processed_sentence = tokenize_re.findall(processed_sentence)  # list of all words without special characters
-    output = []
+    processed_sentence = tokenize_re.findall(sentence)  # list of all words without special characters and without magic separator
+
     for word in processed_sentence:
         word_list = list(word)
         word_part = word_list[1 : len(word_list) - 1]
@@ -25,12 +39,25 @@ def decode_sentence(sentence, orginal_words):
         words_span.append(match.span())
 
     for i, word_span in enumerate(words_span):
-        output_sentence[word_span[0]:word_span[1]] = encoded_words[i]
+        output_sentence[word_span[0]:word_span[1]] = output[i]
 
-    print(output)
+    return "".join(output_sentence)
 
 
 def decode_word(word, orginal_words):
+    """
+    Decode word only if available in orginal_words list,
+    With binary search algorithm lookup for a word with the same first character,
+    after that pointers move back to the first word with the same first character
+    then it checks if the word can be made with the same characters
+
+    Args:
+        word (string): sentence, can contains special characters.
+        orginal_words (string): orgnial_words in alphabetical order separated with space bar
+
+    Returns:
+        string: decoded sentence
+    """
     words_list = orginal_words.split(" ")
     is_same_word = True
     left = 0
@@ -40,7 +67,6 @@ def decode_word(word, orginal_words):
         mid = (left + right) // 2
         if (words_list[mid][0].lower() == word[0].lower()):  # word with same starting character
             left = mid  # only for naming convenience switch pointer
-
             while left >= 0 and words_list[left][0].lower() == word[0].lower() :  # move pointer to first word with same starting character
                 left = left - 1
             left += 1  # move pointer back to position where is first word with same starting character
@@ -61,7 +87,6 @@ def decode_word(word, orginal_words):
                         if is_same_word:
                             return words_list[left]
                 left += 1
-            print(word)
             raise ValueError("word is not in orginal word list")
 
         elif (words_list[mid][0].lower() < word[0].lower()):
@@ -69,7 +94,7 @@ def decode_word(word, orginal_words):
         else:
             right = mid - 1
 
-    pass
+    raise ValueError("word is not in orginal word list")
 
 
 if __name__ == "__main__":

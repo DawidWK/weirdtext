@@ -5,6 +5,13 @@ import re
 def encode_sentence(sentence):
     """
     Encode the sentence, and returns tuple with encoded_sentence and orginal_words.
+
+    Args:
+        sentence (string): sentence, can contains special characters.
+
+    Returns:
+        tuple: [string]encoded sentence and [string]orginal words list, 
+        orgnial_words are sorted in alphabetic order separated with spacebar 
     """
     SEPARATOR = "\n—weird—\n"
     output_sentence = list(sentence)
@@ -36,8 +43,14 @@ def encode_sentence(sentence):
 
 def encode_word(word):
     """
-    Encode the word, and returns tuple with encoded_word and orginal_word.
-    If they are the same, returns only encoded word
+    Encode the word, and returns a tuple with encoded_word and orginal_word.
+
+    Args:
+        word (string): word without special characters.
+
+    Returns:
+        tuple: encoded word and orginal word, if orgninal and encoded word is 
+        the same returns only encoded word and None value
     """
     word_list = list(word)
     if len(word_list) <= 3:
@@ -61,7 +74,13 @@ def encode_word(word):
 
 def can_encode(word_part):
     """
-    Check if middle part of word can be randomized
+    Check if the middle part of the word can be randomized
+
+    Args:
+        word_part (list): List of words character without first and last letter.
+
+    Returns:
+        Bool: True for success, False otherwise.
     """
     for i in range(1, len(word_part)):
         if word_part[0] != word_part[i]:
