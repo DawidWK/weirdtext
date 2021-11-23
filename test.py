@@ -1,5 +1,6 @@
 import unittest
 from encoder import encode_word, encode_sentence
+from decoder import decode_word, decode_sentence
 
 
 class TestEncoder(unittest.TestCase):
@@ -44,7 +45,28 @@ class TestEncoder(unittest.TestCase):
 
 class TestDecoder(unittest.TestCase):
     def test_if_exception_are_rised_if_encoding_text_without_magic_separator(self):
-        pass
+        error = False
+        try:
+            decode_sentence("Hi hlleo how are you taday", "today hello")
+        except ValueError as e:
+            error = True
+        self.assertTrue(error)
+
+    def test_if_exception_are_rised_if_encoded_word_is_not_in_orginal_words(self):
+        error = False
+        try:
+            decode_word("Gravy", "long looong sentence some test This with words")
+        except ValueError as e:
+            error = True
+        self.assertTrue(error)
+
+    def test_if_word_is_decoded_properly(self):
+        decoded_word = decode_word("sntnceee", "long looong sentence some test This with words")
+        self.assertEqual(decoded_word, "sentence")
+
+    def test_if_sentence_is_decoded_properly(self):
+        decoded_sentence = decode_sentence("\n—weird—\nTihs is a lnog loonog tset setncene,\nwtih smoe big (biiiiig) wdros!\n—weird—\n", "long looong sentence some test This with words")
+        self.assertEqual(decoded_sentence, 'This is a long looong test sentence,\nwith some big (biiiiig) words!')
 
 
 if __name__ == "__main__":
